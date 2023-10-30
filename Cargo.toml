@@ -1,0 +1,18 @@
+[package]
+name = "rust-buildcheck"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cargo_metadata = "0.18.1"
+clap = { version = "4.4.7", features = ["derive"] }
+git2 = "0.17.2"
+if_chain = "1.0.2"
+semver = "1.0.20"
+serde = "1.0.190"
+serde_derive = "1.0.190"
+thiserror = "1.0.50"
+toml = "0.8.6"
+
