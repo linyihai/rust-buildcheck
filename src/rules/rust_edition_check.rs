@@ -1,3 +1,5 @@
+// G.RS.05
+// G.RS.06
 use super::errors::{CheckError, CheckResult};
 use super::RuleChecker;
 use crate::commands::Args;
@@ -38,13 +40,10 @@ impl RuleChecker for EditionCheck {
                     ),
                     }));
                 }
-            } 
+            }
             if package.edition < Edition::E2021 {
                 check_res.push(Err(CheckError::Check {
-                    stderr: format!(
-                        "[G.RS.06] {} no newest rust editon.",
-                        package.manifest_path
-                    ),
+                    stderr: format!("[G.RS.06] {} no newest rust editon.", package.manifest_path),
                 }));
             }
         }

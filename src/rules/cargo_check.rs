@@ -1,3 +1,5 @@
+// G.RS.08
+// G.RS.14
 use std::fs;
 
 use super::errors::{CheckError, CheckResult};
@@ -57,7 +59,10 @@ impl LockCheck {
         let status = repo.status_file(toml_file)?;
         if status.is_index_new() || status.is_wt_new() {
             return Err(CheckError::Check {
-                stderr: format!("[G.RS.08] {} not committed in package.", toml_file.display()),
+                stderr: format!(
+                    "[G.RS.08] {} not committed in package.",
+                    toml_file.display()
+                ),
             });
         }
         Ok(())
