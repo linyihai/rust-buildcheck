@@ -1,7 +1,7 @@
 use std::fs;
 
-use super::errors::{BuildError, BuildResult};
-use super::BuildRule;
+use super::errors::{CheckError, CheckResult};
+use super::RuleChecker;
 use crate::commands::pack_crate;
 use crate::commands::Args;
 use cargo_metadata::Metadata;
@@ -10,14 +10,8 @@ use cargo_metadata::Metadata;
 pub struct PackageCheck;
 
 impl PackageCheck {
-    pub fn new() -> PackageCheck {
-        PackageCheck
-    }
-}
-
-impl PackageCheck {
     // check crate size whether over 10MB
-    fn check_package_size(&self, m: &Metadata, max_size: f32) -> BuildResult<()> {
+    fn check_package_size(&self, m: &Metadata, max_size: f32) -> CheckResult<()> {
         let root_package = m.root_package().unwrap();
         let create_name = format!("{}-{}.crate", root_package.name, root_package.version);
         let dir = root_package.manifest_path.parent().unwrap().as_std_path();
@@ -26,16 +20,46 @@ impl PackageCheck {
         let crate_size = fs::metadata(crate_path).unwrap().len();
         let max_crate_size = max_size * 1000000.0;
         if crate_size as f32 > max_crate_size {
-            return Err(BuildError::Check {
-                stderr: format!("crate `{}` size over {}MB.", &create_name, max_size),
+            return Err(CheckError::Check {
+                stderr: format!(
+                    "[G.RS.21] crate `{}` size over {}MB.",
+                    &create_name, max_size
+                ),
             });
         }
         Ok(())
     }
+
+    fn check_package_name(&self, m: &Metadata) -> Vec<CheckResult<()>> {
+        let mut check_res = vec![];
+
+        for package in &m.packages {
+            if !is_valid_package_name(&package.name) {
+                check_res.push(Err(CheckError::Check {
+                    stderr: format!(
+                        "[G.RS.18] crate name `{}` not start with ylong_ or huawei_ .",
+                        package.name
+                    ),
+                }))
+            }
+        }
+        check_res
+    }
 }
 
-impl BuildRule for PackageCheck {
-    fn check(&self, m: &Metadata, args: &Args) -> Vec<BuildResult<()>> {
-        vec![(self.check_package_size(m, args.crate_size))]
+impl RuleChecker for PackageCheck {
+    fn check(&self, m: &Metadata, args: &Args) -> Vec<CheckResult<()>> {
+        let mut check_res = vec![];
+        let res = self.check_package_size(m, args.crate_size);
+        if res.is_err() {
+            check_res.push(res);
+        }
+
+        check_res.append(&mut self.check_package_name(m));
+        check_res
     }
+}
+
+fn is_valid_package_name(name: &str) -> bool {
+    ["ylong_", "huawei_"].iter().any(|p| name.starts_with(p))
 }
