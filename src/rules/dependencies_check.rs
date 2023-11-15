@@ -1,7 +1,7 @@
 // G.RS.19
-use super::errors::{CheckError, CheckResult};
 use super::RuleChecker;
 use crate::commands::Args;
+use crate::errors::{build_detail_err, BuildRule, CheckResult};
 use cargo_metadata::Metadata;
 use if_chain::if_chain;
 
@@ -18,14 +18,11 @@ impl RuleChecker for DependenciesCheck {
                     if !source.starts_with("git");
                     if !is_explicit_version(&dep.req);
                     then {
-                        check_res.push(Err(
-                            CheckError::Check {
-                                stderr: format!(
-                                "[G.RS.19] package {} use no explicit version for dependency {}.",
-                                package.name, dep.name
-                            ),
-                            }
-                        ))
+                        let err = build_detail_err(BuildRule::GRS19, "".to_string(),  format!(
+                            "[G.RS.19] package {} use no explicit version for dependency {}.",
+                            package.name, dep.name
+                        ));
+                        check_res.push(err);
                     }
                 }
             }

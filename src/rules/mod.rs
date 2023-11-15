@@ -1,15 +1,17 @@
 mod cargo_check;
 mod dependencies_check;
-mod errors;
 mod metadata_util;
 mod package_check;
 mod rust_edition_check;
 
+use std::fs;
+
 use crate::commands::Args;
+use crate::errors::{CheckError, CheckResult};
+use crate::output;
 use cargo_check::LockCheck;
 use cargo_metadata::{CargoOpt, Error as MetaDataError, Metadata, MetadataCommand};
 use dependencies_check::DependenciesCheck;
-use errors::{CheckError, CheckResult};
 use package_check::PackageCheck;
 use rust_edition_check::EditionCheck;
 
@@ -59,6 +61,8 @@ impl BuildRuleChecker {
             println!("{}", err);
         }
         if !check_failed_err.is_empty() {
+            let output = serde_json::to_string(&output::Output::from(check_failed_err)).unwrap();
+            fs::write(&self.args.output_file, output).unwrap();
             std::process::exit(1)
         } else {
             println!("All build check done.");

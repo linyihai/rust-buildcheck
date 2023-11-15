@@ -1,4 +1,6 @@
 mod commands;
+mod errors;
+mod output;
 mod rules;
 
 use clap::Parser;

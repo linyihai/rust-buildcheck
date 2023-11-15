@@ -2,10 +2,10 @@
 // G.RS.14
 use std::fs;
 
-use super::errors::{CheckError, CheckResult};
 use super::metadata_util::{self, TargetType};
 use super::RuleChecker;
 use crate::commands::Args;
+use crate::errors::{build_detail_err, BuildRule, CheckError, CheckResult};
 use cargo_metadata::{Metadata, Package};
 
 #[derive(Debug, Clone, Default)]
@@ -26,29 +26,35 @@ impl LockCheck {
         if fs::metadata(lock_file).is_ok() {
             let status = repo.status_file(lock_file)?;
             if target_type == TargetType::Binary && (status.is_index_new() || status.is_wt_new()) {
-                return Err(CheckError::Check {
-                    stderr: format!(
+                return build_detail_err(
+                    BuildRule::GRS14,
+                    lock_file.display().to_string(),
+                    format!(
                         "`[G.RS.14] {}` was not committed in binary package.",
                         lock_file.display()
                     ),
-                });
+                );
             }
             if target_type == TargetType::Libaray && !(status.is_index_new() || status.is_wt_new())
             {
-                return Err(CheckError::Check {
-                    stderr: format!(
-                        "`[G.RS.14] {}` was committed in library package.",
+                return build_detail_err(
+                    BuildRule::GRS14,
+                    lock_file.display().to_string(),
+                    format!(
+                        "`[G.RS.14] {}` was not committed in library package.",
                         lock_file.display()
                     ),
-                });
+                );
             }
         } else if target_type == TargetType::Binary {
-            return Err(CheckError::Check {
-                stderr: format!(
+            return build_detail_err(
+                BuildRule::GRS14,
+                lock_file.display().to_string(),
+                format!(
                     "`[G.RS.14] {}` was not committed in binary package.",
                     lock_file.display()
                 ),
-            });
+            );
         }
 
         let binding = parent_path
@@ -58,12 +64,14 @@ impl LockCheck {
         let toml_file = binding.as_path();
         let status = repo.status_file(toml_file)?;
         if status.is_index_new() || status.is_wt_new() {
-            return Err(CheckError::Check {
-                stderr: format!(
-                    "[G.RS.08] {} not committed in package.",
+            return build_detail_err(
+                BuildRule::GRS08,
+                toml_file.display().to_string(),
+                format!(
+                    "`[G.RS.08] {}` was not committed in package.",
                     toml_file.display()
                 ),
-            });
+            );
         }
         Ok(())
     }
