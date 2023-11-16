@@ -14,6 +14,8 @@ pub enum CheckError {
     MetaData(#[from] MetaDataError),
     #[error("error from `git2`: {0}")]
     Git2(#[from] Git2Error),
+    #[error("{0}")]
+    AnyHow(#[from] anyhow::Error),
 }
 
 #[derive(Debug, Default)]
