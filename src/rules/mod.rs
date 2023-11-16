@@ -1,15 +1,18 @@
 mod cargo_check;
 mod dependencies_check;
-mod errors;
 mod metadata_util;
 mod package_check;
 mod rust_edition_check;
 
+use std::fs::{self, File};
+
 use crate::commands::Args;
+use crate::errors::{CheckError, CheckResult};
+use crate::output;
+use anyhow::anyhow;
 use cargo_check::LockCheck;
 use cargo_metadata::{CargoOpt, Error as MetaDataError, Metadata, MetadataCommand};
 use dependencies_check::DependenciesCheck;
-use errors::{CheckError, CheckResult};
 use package_check::PackageCheck;
 use rust_edition_check::EditionCheck;
 
@@ -33,6 +36,9 @@ pub struct BuildRuleChecker {
 
 impl BuildRuleChecker {
     pub fn new(args: Args) -> CheckResult<BuildRuleChecker> {
+        if File::create(&args.output_file).is_err() {
+            return Err(anyhow!("output_file path invalid").into());
+        }
         Ok(BuildRuleChecker {
             rules: vec![
                 Box::new(LockCheck),
@@ -58,7 +64,12 @@ impl BuildRuleChecker {
         for err in &check_failed_err {
             println!("{}", err);
         }
-        if !check_failed_err.is_empty() {
+
+        let is_check_ok = &check_failed_err.is_empty();
+        println!("the output file is {}", &self.args.output_file);
+        let output = serde_json::to_string(&output::Output::from(check_failed_err)).unwrap();
+        fs::write(&self.args.output_file, output).unwrap();
+        if !is_check_ok {
             std::process::exit(1)
         } else {
             println!("All build check done.");

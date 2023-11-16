@@ -2,10 +2,10 @@
 // G.RS.21
 use std::fs;
 
-use super::errors::{CheckError, CheckResult};
 use super::RuleChecker;
 use crate::commands::pack_crate;
 use crate::commands::Args;
+use crate::errors::{build_detail_err, BuildRule, CheckResult};
 use cargo_metadata::Metadata;
 
 #[derive(Debug, Clone, Default)]
@@ -22,12 +22,14 @@ impl PackageCheck {
         let crate_size = fs::metadata(crate_path).unwrap().len();
         let max_crate_size = max_size * 1000000.0;
         if crate_size as f32 > max_crate_size {
-            return Err(CheckError::Check {
-                stderr: format!(
+            return build_detail_err(
+                BuildRule::GRS21,
+                dir.display().to_string(),
+                format!(
                     "[G.RS.21] crate `{}` size over {}MB.",
                     &create_name, max_size
                 ),
-            });
+            );
         }
         Ok(())
     }
@@ -37,12 +39,14 @@ impl PackageCheck {
 
         for package in &m.packages {
             if !is_valid_package_name(&package.name) {
-                check_res.push(Err(CheckError::Check {
-                    stderr: format!(
+                check_res.push(build_detail_err(
+                    BuildRule::GRS18,
+                    "".to_string(),
+                    format!(
                         "[G.RS.18] crate name `{}` not start with ylong_ or huawei_ .",
                         package.name
                     ),
-                }))
+                ));
             }
         }
         check_res
