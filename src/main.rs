@@ -3,14 +3,12 @@ mod errors;
 mod output;
 mod rules;
 
+use anyhow::Result;
 use clap::Parser;
 
-fn main() {
+fn main() -> Result<()> {
     let args = commands::Args::parse();
-    let checker = rules::BuildRuleChecker::new(args);
-    if let Ok(checker) = checker {
-        checker.check_rule();
-    } else {
-        println!("build check failed: {}", checker.err().unwrap());
-    }
+    let checker = rules::BuildRuleChecker::new(args)?;
+    checker.check_rule();
+    Ok(())
 }

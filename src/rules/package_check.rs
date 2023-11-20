@@ -6,6 +6,7 @@ use super::RuleChecker;
 use crate::commands::pack_crate;
 use crate::commands::Args;
 use crate::errors::{build_detail_err, BuildRule, CheckResult};
+use anyhow::Context;
 use cargo_metadata::Metadata;
 
 #[derive(Debug, Clone, Default)]
@@ -18,8 +19,10 @@ impl PackageCheck {
         let create_name = format!("{}-{}.crate", root_package.name, root_package.version);
         let dir = root_package.manifest_path.parent().unwrap().as_std_path();
         let crate_path = dir.join("target").join("package").join(&create_name);
-        pack_crate(root_package.manifest_path.as_std_path());
-        let crate_size = fs::metadata(crate_path).unwrap().len();
+        pack_crate(root_package.manifest_path.as_std_path())?;
+        let crate_size = fs::metadata(crate_path)
+            .with_context(|| "cannot find the packed crate")?
+            .len();
         let max_crate_size = max_size * 1000000.0;
         if crate_size as f32 > max_crate_size {
             return build_detail_err(

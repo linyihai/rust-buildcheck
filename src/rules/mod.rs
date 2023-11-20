@@ -9,23 +9,15 @@ use std::fs::{self, File};
 use crate::commands::Args;
 use crate::errors::{CheckError, CheckResult};
 use crate::output;
-use anyhow::anyhow;
+use anyhow::Context;
 use cargo_check::LockCheck;
-use cargo_metadata::{CargoOpt, Error as MetaDataError, Metadata, MetadataCommand};
+use cargo_metadata::{CargoOpt, Metadata, MetadataCommand};
 use dependencies_check::DependenciesCheck;
 use package_check::PackageCheck;
 use rust_edition_check::EditionCheck;
 
 trait RuleChecker {
     fn check(&self, m: &Metadata, args: &Args) -> Vec<CheckResult<()>>;
-}
-
-fn get_metadata(manifesh_path: &String) -> Result<Metadata, MetaDataError> {
-    MetadataCommand::new()
-        .no_deps()
-        .features(CargoOpt::AllFeatures)
-        .manifest_path(manifesh_path)
-        .exec()
 }
 
 pub struct BuildRuleChecker {
@@ -36,9 +28,13 @@ pub struct BuildRuleChecker {
 
 impl BuildRuleChecker {
     pub fn new(args: Args) -> CheckResult<BuildRuleChecker> {
-        if File::create(&args.output_file).is_err() {
-            return Err(anyhow!("output_file path invalid").into());
-        }
+        _ = File::create(&args.output_file).with_context(|| "output_file path invalid")?;
+        let metadata = MetadataCommand::new()
+        .no_deps()
+        .features(CargoOpt::AllFeatures)
+        .manifest_path(&args.manifest_path)
+        .exec().with_context(|| "get cargo metadata failed, please check you -m flag, the Cargo.toml path may be invalid")?;
+
         Ok(BuildRuleChecker {
             rules: vec![
                 Box::new(LockCheck),
@@ -46,7 +42,7 @@ impl BuildRuleChecker {
                 Box::new(EditionCheck),
                 Box::new(DependenciesCheck),
             ],
-            metadata: get_metadata(&args.manifest_path).map_err(CheckError::MetaData)?,
+            metadata,
             args,
         })
     }
@@ -62,7 +58,14 @@ impl BuildRuleChecker {
             .filter_map(|t| if let Err(err) = t { Some(err) } else { None })
             .collect::<Vec<&CheckError>>();
         for err in &check_failed_err {
-            println!("{}", err);
+            match err {
+                CheckError::CheckDetail(_) => {
+                    println!("{}", err);
+                }
+                _ => {
+                    std::process::exit(1);
+                }
+            }
         }
 
         let is_check_ok = &check_failed_err.is_empty();
