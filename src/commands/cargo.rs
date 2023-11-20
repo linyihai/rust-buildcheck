@@ -1,3 +1,5 @@
+use crate::errors::CheckResult;
+use anyhow::Context;
 use std::env;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -8,7 +10,7 @@ fn get_cargo_path() -> PathBuf {
         .unwrap_or_else(|_| PathBuf::from("cargo"))
 }
 
-pub fn pack_crate(manifest_path: &Path) {
+pub fn pack_crate(manifest_path: &Path) -> CheckResult<()> {
     let mut command = Command::new(get_cargo_path());
     command
         .args([
@@ -20,5 +22,6 @@ pub fn pack_crate(manifest_path: &Path) {
         ])
         .arg(manifest_path.as_os_str());
     command.stderr(Stdio::inherit());
-    command.output().unwrap();
+    command.output().with_context(|| "cargo package failed")?;
+    Ok(())
 }

@@ -1,18 +1,19 @@
 use std::fmt::Display;
 
 use crate::output::{self, Level};
+use anyhow::Result;
 use cargo_metadata::Error as MetaDataError;
 use git2::Error as Git2Error;
 
-pub type CheckResult<T> = ::std::result::Result<T, CheckError>;
+pub type CheckResult<T> = Result<T, CheckError>;
 // custom build check error which contains MetadataError
 #[derive(Debug, thiserror::Error)]
 pub enum CheckError {
     #[error("build check failed: {0}")]
     CheckDetail(Detail),
-    #[error("error from `cargo_metadata`: {0}")]
+    #[error("{0}")]
     MetaData(#[from] MetaDataError),
-    #[error("error from `git2`: {0}")]
+    #[error("{0}")]
     Git2(#[from] Git2Error),
     #[error("{0}")]
     AnyHow(#[from] anyhow::Error),
