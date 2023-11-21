@@ -9,6 +9,6 @@ use clap::Parser;
 fn main() -> Result<()> {
     let args = commands::Args::parse();
     let checker = rules::BuildRuleChecker::new(args)?;
-    checker.check_rule();
+    checker.check_rule()?;
     Ok(())
 }

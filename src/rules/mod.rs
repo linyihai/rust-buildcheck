@@ -3,13 +3,12 @@ mod dependencies_check;
 mod metadata_util;
 mod package_check;
 mod rust_edition_check;
-
 use std::fs::{self, File};
 
 use crate::commands::Args;
 use crate::errors::{CheckError, CheckResult};
 use crate::output;
-use anyhow::Context;
+use anyhow::{Context, Result};
 use cargo_check::LockCheck;
 use cargo_metadata::{CargoOpt, Metadata, MetadataCommand};
 use dependencies_check::DependenciesCheck;
@@ -47,7 +46,7 @@ impl BuildRuleChecker {
         })
     }
 
-    pub fn check_rule(&self) {
+    pub fn check_rule(&self) -> Result<()> {
         let mut check_res: Vec<Result<(), CheckError>> = vec![];
         for checker in &self.rules {
             let mut res = checker.check(&self.metadata, &self.args);
@@ -71,11 +70,13 @@ impl BuildRuleChecker {
         let is_check_ok = &check_failed_err.is_empty();
         println!("the output file is {}", &self.args.output_file);
         let output = serde_json::to_string(&output::Output::from(check_failed_err)).unwrap();
-        fs::write(&self.args.output_file, output).unwrap();
+        fs::write(&self.args.output_file, output)
+            .with_context(|| "save check result to file failed")?;
         if !is_check_ok {
             std::process::exit(1)
         } else {
             println!("All build check done.");
         }
+        Ok(())
     }
 }
