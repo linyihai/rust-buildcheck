@@ -1,13 +1,16 @@
 mod cargo_check;
 mod dependencies_check;
+mod license_check;
 mod metadata_util;
 mod package_check;
 mod rust_edition_check;
+
 use std::fs::{self, File};
 
 use crate::commands::Args;
 use crate::errors::{CheckError, CheckResult};
 use crate::output;
+use crate::rules::license_check::LicenseCheck;
 use anyhow::{Context, Result};
 use cargo_check::LockCheck;
 use cargo_metadata::{CargoOpt, Metadata, MetadataCommand};
@@ -40,6 +43,7 @@ impl BuildRuleChecker {
                 Box::new(PackageCheck),
                 Box::new(EditionCheck),
                 Box::new(DependenciesCheck),
+                Box::new(LicenseCheck),
             ],
             metadata,
             args,

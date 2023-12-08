@@ -36,6 +36,7 @@ pub enum BuildRule {
     GRS05,
     GRS06,
     GRS08,
+    GRS10,
     GRS14,
     GRS18,
     GRS19,
