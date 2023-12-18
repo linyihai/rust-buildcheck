@@ -1,7 +1,6 @@
 mod cargo_check;
 mod dependencies_check;
 mod license_check;
-mod metadata_util;
 mod package_check;
 mod rust_edition_check;
 

@@ -11,13 +11,13 @@ Usage: rust-buildcheck.exe [OPTIONS]
 Options:
   -m, --manifest-path <MANIFEST_PATH>  the path of Cargo.toml in the root package directory [default: Cargo.toml]
   -c, --crate-size <CRATE_SIZE>        the packed crate size(MB) [default: 10]
-  -o, --output-file <OUTPUT_FILE>      the output file, [default: ./rust_buildcheck_output]
+  -o, --output-file <OUTPUT_FILE>      the output file, [default: rust_buildcheck_output.json]
   -h, --help                           Print help
   -V, --version                        Print version
 ```
 
 - -m 指定Cargo.toml文件地址，不指定则默认为当前目录下Cargo.toml
-- -o 指定结果输出文件，不指定默认为当前目录下的rust_buildcheck_output
+- -o 指定结果输出文件，不指定默认为当前目录下的rust_buildcheck_output.json
 - -c 执行crate包的大小检查项目，默认为10MB
 
 在rust项目根目录下直接执行rust-bulidcheck二进制文件，输出实例:
@@ -45,7 +45,7 @@ $ echo $?
 - G.RS.05
 - G.RS.06
 - G.RS.08
-- G.RS.14
+- G.RS.10
 - G.RS.18
 - G.RS.19
 - G.RS.21
