@@ -21,3 +21,11 @@ serde_derive = "1.0.190"
 thiserror = "1.0.50"
 toml = "0.8.6"
 anyhow = "1.0.75"
+
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
+opt-level = "z"
+strip = "debuginfo"
+panic = "abort"

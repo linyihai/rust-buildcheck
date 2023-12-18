@@ -11,7 +11,7 @@ Usage: rust-buildcheck.exe [OPTIONS]
 Options:
   -m, --manifest-path <MANIFEST_PATH>  the path of Cargo.toml in the root package directory [default: Cargo.toml]
   -c, --crate-size <CRATE_SIZE>        the packed crate size(MB) [default: 10]
-  -o, --output-file <OUTPUT_FILE>      the output file, [default: ./rust_buildcheck_output]
+  -o, --output-file <OUTPUT_FILE>      the output file, [default: rust_buildcheck_output.json]
   -h, --help                           Print help
   -V, --version                        Print version
 ```
