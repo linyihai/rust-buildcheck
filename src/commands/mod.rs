@@ -12,6 +12,6 @@ pub struct Args {
     #[arg(short, long, default_value_t = 10.0)]
     pub crate_size: f32,
     /// the output file,
-    #[arg(short, long, default_value_t = String::from("rust_buildcheck_output"))]
+    #[arg(short, long, default_value_t = String::from("rust_buildcheck_output.json"))]
     pub output_file: String,
 }

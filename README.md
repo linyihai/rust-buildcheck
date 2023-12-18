@@ -17,7 +17,7 @@ Options:
 ```
 
 - -m 指定Cargo.toml文件地址，不指定则默认为当前目录下Cargo.toml
-- -o 指定结果输出文件，不指定默认为当前目录下的rust_buildcheck_output
+- -o 指定结果输出文件，不指定默认为当前目录下的rust_buildcheck_output.json
 - -c 执行crate包的大小检查项目，默认为10MB
 
 在rust项目根目录下直接执行rust-bulidcheck二进制文件，输出实例:
