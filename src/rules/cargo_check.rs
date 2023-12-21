@@ -1,4 +1,3 @@
-// G.RS.08
 use super::RuleChecker;
 use crate::commands::Args;
 use crate::errors::{build_detail_err, BuildRule, CheckError, CheckResult};
@@ -23,10 +22,7 @@ impl LockCheck {
             return build_detail_err(
                 BuildRule::GRS08,
                 toml_file.display().to_string(),
-                format!(
-                    "`[G.RS.08] {}` was not committed in package.",
-                    toml_file.display()
-                ),
+                format!("`{}` was not committed in package.", toml_file.display()),
             );
         }
         Ok(())

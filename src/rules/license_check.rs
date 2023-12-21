@@ -1,4 +1,3 @@
-// G.RS.10
 use crate::commands::Args;
 use crate::errors::{build_detail_err, BuildRule, CheckResult};
 use crate::rules::RuleChecker;
@@ -15,10 +14,7 @@ impl RuleChecker for LicenseCheck {
                 let err = build_detail_err(
                     BuildRule::GRS10,
                     "".to_string(),
-                    format!(
-                        "[G.RS.10] package `{}` contains `license` field",
-                        package.name
-                    ),
+                    format!("package `{}` contains `license` field", package.name),
                 );
                 check_res.push(err)
             }
@@ -26,10 +22,7 @@ impl RuleChecker for LicenseCheck {
                 let err = build_detail_err(
                     BuildRule::GRS10,
                     "".to_string(),
-                    format!(
-                        "[G.RS.10] package `{}` contains `license-file` field",
-                        package.name
-                    ),
+                    format!("package `{}` contains `license-file` field", package.name),
                 );
                 check_res.push(err)
             }

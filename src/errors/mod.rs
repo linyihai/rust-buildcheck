@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::fmt::{self, Display};
 
 use crate::output::{self, Level};
 use anyhow::Result;
@@ -37,9 +37,23 @@ pub enum BuildRule {
     GRS06,
     GRS08,
     GRS10,
+    GRS17,
     GRS18,
-    GRS19,
-    GRS21,
+    GRS20,
+}
+
+impl fmt::Display for BuildRule {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            BuildRule::GRS05 => write!(f, "[G.RS.05]"),
+            BuildRule::GRS06 => write!(f, "[G.RS.06]"),
+            BuildRule::GRS08 => write!(f, "[G.RS.08]"),
+            BuildRule::GRS10 => write!(f, "[G.RS.10]"),
+            BuildRule::GRS17 => write!(f, "[G.RS.17]"),
+            BuildRule::GRS18 => write!(f, "[G.RS.18]"),
+            BuildRule::GRS20 => write!(f, "[G.RS.20]"),
+        }
+    }
 }
 
 impl From<BuildRule> for Detail {
@@ -72,9 +86,10 @@ pub fn build_detail_err(
     location: String,
     description: String,
 ) -> CheckResult<()> {
+    let _descrption = format!("{} {}", &build_rule, description);
     Err(CheckError::CheckDetail(Detail::build(
         build_rule,
         location,
-        description,
+        _descrption,
     )))
 }
