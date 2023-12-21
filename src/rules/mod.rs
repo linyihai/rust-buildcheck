@@ -60,13 +60,8 @@ impl BuildRuleChecker {
             .filter_map(|t| if let Err(err) = t { Some(err) } else { None })
             .collect::<Vec<&CheckError>>();
         for err in &check_failed_err {
-            match err {
-                CheckError::CheckDetail(_) => {
-                    println!("{}", err);
-                }
-                _ => {
-                    std::process::exit(1);
-                }
+            if let CheckError::CheckDetail(detail) = err {
+                print!("{}", detail);
             }
         }
 

@@ -25,10 +25,10 @@ Options:
 ```shell
 $ rust-buildcheck.exe
 package name: _clippytest
-build check failed: [G.RS.18] crate name `_clippytest` not start with ylong_ or huawei_ .
+build check failed: [G.RS.17] crate name `_clippytest` not start with ylong_ or huawei_ .
 build check failed: [G.RS.05] E:\rust\clippytest\Cargo.toml has no edition field, please add a edition like `edition = 2021`.
 build check failed: [G.RS.06] E:\rust\clippytest\Cargo.toml no newest rust editon.
-build check failed: [G.RS.19] package _clippytest use no explicit version for dependency regex.
+build check failed: [G.RS.18] package _clippytest use no explicit version for dependency regex.
 ```
 
 其中G.RS.18为Rust构建规范对应条目
@@ -46,7 +46,7 @@ $ echo $?
 - G.RS.06
 - G.RS.08
 - G.RS.10
+- G.RS.17
 - G.RS.18
-- G.RS.19
-- G.RS.21
+- G.RS.20
   

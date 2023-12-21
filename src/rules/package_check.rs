@@ -1,5 +1,3 @@
-// G.RS.18
-// G.RS.21
 use std::fs;
 
 use super::RuleChecker;
@@ -26,12 +24,9 @@ impl PackageCheck {
         let max_crate_size = max_size * 1000000.0;
         if crate_size as f32 > max_crate_size {
             return build_detail_err(
-                BuildRule::GRS21,
+                BuildRule::GRS20,
                 dir.display().to_string(),
-                format!(
-                    "[G.RS.21] crate `{}` size over {}MB.",
-                    &create_name, max_size
-                ),
+                format!("crate `{}` size over {}MB.", &create_name, max_size),
             );
         }
         Ok(())
@@ -43,10 +38,10 @@ impl PackageCheck {
         for package in &m.packages {
             if !is_valid_package_name(&package.name) {
                 check_res.push(build_detail_err(
-                    BuildRule::GRS18,
+                    BuildRule::GRS17,
                     "".to_string(),
                     format!(
-                        "[G.RS.18] crate name `{}` not start with ylong_ or huawei_ .",
+                        "crate name `{}` not start with ylong_ or huawei_ .",
                         package.name
                     ),
                 ));
