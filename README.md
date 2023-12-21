@@ -5,8 +5,8 @@
 命令行参数：
 
 ```shell
-$ rust-buildcheck.exe --help
-Usage: rust-buildcheck.exe [OPTIONS]
+$ build-inspector.exe --help
+Usage: build-inspector.exe [OPTIONS]
 
 Options:
   -m, --manifest-path <MANIFEST_PATH>  the path of Cargo.toml in the root package directory [default: Cargo.toml]
@@ -23,22 +23,17 @@ Options:
 在rust项目根目录下直接执行rust-bulidcheck二进制文件，输出实例:
 
 ```shell
-$ rust-buildcheck.exe
-package name: _clippytest
-build check failed: [G.RS.17] crate name `_clippytest` not start with ylong_ or huawei_ .
-build check failed: [G.RS.05] E:\rust\clippytest\Cargo.toml has no edition field, please add a edition like `edition = 2021`.
-build check failed: [G.RS.06] E:\rust\clippytest\Cargo.toml no newest rust editon.
-build check failed: [G.RS.18] package _clippytest use no explicit version for dependency regex.
+$ build-inspector.exe 
+package name: build-inspector
+[G.RS.17] crate name `build-inspector` not start with ylong_ or huawei_ .
+[G.RS.10] package `build-inspector` contains `license` field
+the output file is rust_buildcheck_output.json
 ```
+- **package name: build-inspector** 为检查Rust项目的包名
+- G.RS.17为Rust构建规范对应条目
+- `rust_buildcheck_output.json` 为最后输出的构建检查结果文件，可以通过`--out-file`参数自定义输出文件名
+- 如果执行失败，返回错误码1(如shell中执行echo $? 返回1)
 
-其中G.RS.18为Rust构建规范对应条目
-
-如果执行失败，返回错误码1
-
-```shell
-$ echo $?
-1
-```
 
 ## 支持条目
 
