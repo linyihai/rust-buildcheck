@@ -44,4 +44,8 @@ the output file is rust_buildcheck_output.json
 - G.RS.17
 - G.RS.18
 - G.RS.20
-  
+
+## 注意事项  
+
+- 工具依赖于`cargo_metadata`获取rust项目信息，而`cargo_metadata` crate要求环境须安装Cargo
+- 注意glibc版本问题，高版本glibc构建出来的二进制在低版本上运行不了，如默认情况ubuntu22构建的rust二进制无法在ubuntu18上执行。
