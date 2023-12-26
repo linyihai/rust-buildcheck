@@ -13,7 +13,7 @@ pub struct Output {
 pub struct ErrDescription {
     defect_type: String,
     detail: String,
-    errno: i32,
+    errno: String,
     level: Level,
     line: u32,
     location: String,
@@ -40,6 +40,7 @@ impl From<Vec<&CheckError>> for Output {
                         detail: detail.description.clone(),
                         location: detail.location.clone(),
                         level: detail.level,
+                        errno: detail.errno.clone(),
                         ..Default::default()
                     }),
                     _ => None,

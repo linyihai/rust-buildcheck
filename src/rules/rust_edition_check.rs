@@ -1,5 +1,3 @@
-// G.RS.05
-// G.RS.06
 use super::RuleChecker;
 use crate::commands::Args;
 use crate::errors::{build_detail_err, BuildRule, CheckResult};
@@ -33,18 +31,21 @@ impl RuleChecker for EditionCheck {
             if package.edition == Edition::E2015 {
                 let toml_config = read_toml_file(package.manifest_path.as_std_path());
                 if toml_config.package.edition.is_none() {
-                    check_res.push(build_detail_err(BuildRule::GRS05, "".to_string(), format!(
-                            "[G.RS.05] {} has no edition field, please add a edition like `edition = 2021`.",
+                    check_res.push(build_detail_err(
+                        BuildRule::GRS05,
+                        "".to_string(),
+                        format!(
+                            "{} has no edition field, please add a edition like `edition = 2021`.",
                             package.manifest_path
-                        ))
-                    );
+                        ),
+                    ));
                 }
             }
             if package.edition < Edition::E2021 {
                 check_res.push(build_detail_err(
                     BuildRule::GRS06,
                     "".to_string(),
-                    format!("[G.RS.06] {} no newest rust editon.", package.manifest_path),
+                    format!("{} no newest rust editon.", package.manifest_path),
                 ));
             }
         }

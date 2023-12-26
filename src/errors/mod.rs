@@ -24,6 +24,7 @@ pub struct Detail {
     pub description: String,
     pub level: output::Level,
     pub location: String,
+    pub errno: String,
 }
 
 impl Display for Detail {
@@ -59,12 +60,39 @@ impl fmt::Display for BuildRule {
 impl From<BuildRule> for Detail {
     fn from(value: BuildRule) -> Self {
         match value {
-            BuildRule::GRS06 => Detail {
-                level: Level::Suggestion,
+            BuildRule::GRS05 => Detail {
+                level: Level::Rule,
+                errno: String::from("31004"),
                 ..Detail::default()
             },
-            _ => Detail {
+            BuildRule::GRS06 => Detail {
+                level: Level::Suggestion,
+                errno: String::from("31005"),
+                ..Detail::default()
+            },
+            BuildRule::GRS08 => Detail {
                 level: Level::Rule,
+                errno: String::from("31007"),
+                ..Detail::default()
+            },
+            BuildRule::GRS10 => Detail {
+                level: Level::Rule,
+                errno: String::from("31009"),
+                ..Detail::default()
+            },
+            BuildRule::GRS17 => Detail {
+                level: Level::Rule,
+                errno: String::from("31016"),
+                ..Detail::default()
+            },
+            BuildRule::GRS18 => Detail {
+                level: Level::Rule,
+                errno: String::from("31017"),
+                ..Detail::default()
+            },
+            BuildRule::GRS20 => Detail {
+                level: Level::Rule,
+                errno: String::from("31019"),
                 ..Detail::default()
             },
         }
@@ -86,10 +114,9 @@ pub fn build_detail_err(
     location: String,
     description: String,
 ) -> CheckResult<()> {
-    let _descrption = format!("{} {}", &build_rule, description);
     Err(CheckError::CheckDetail(Detail::build(
         build_rule,
         location,
-        _descrption,
+        description,
     )))
 }
