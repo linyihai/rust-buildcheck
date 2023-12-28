@@ -36,6 +36,7 @@ impl BuildRuleChecker {
         let metadata = MetadataCommand::new()
         .no_deps()
         .features(CargoOpt::AllFeatures)
+        .other_options(vec!["--offline".to_string()])
         .manifest_path(&args.manifest_path)
         .exec().with_context(|| "get cargo metadata failed, check cargo is installed and the contents of Cargo.toml are correct")?;
 
