@@ -33,10 +33,10 @@ impl RuleChecker for EditionCheck {
                 if toml_config.package.edition.is_none() {
                     check_res.push(build_detail_err(
                         BuildRule::GRS05,
-                        "".to_string(),
+                        package.manifest_path.as_str().to_string(),
                         format!(
                             "{} has no edition field, please add a edition like `edition = 2021`.",
-                            package.manifest_path
+                            package.manifest_path.file_name().unwrap()
                         ),
                     ));
                 }
@@ -44,8 +44,8 @@ impl RuleChecker for EditionCheck {
             if package.edition < Edition::E2021 {
                 check_res.push(build_detail_err(
                     BuildRule::GRS06,
-                    "".to_string(),
-                    format!("{} no newest rust editon.", package.manifest_path),
+                    package.manifest_path.as_str().to_string(),
+                    format!("{} no newest rust editon.", package.manifest_path.file_name().unwrap()),
                 ));
             }
         }

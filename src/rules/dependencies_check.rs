@@ -17,7 +17,7 @@ impl RuleChecker for DependenciesCheck {
                     if !source.starts_with("git");
                     if !is_explicit_version(&dep.req);
                     then {
-                        let err = build_detail_err(BuildRule::GRS18, "".to_string(),  format!(
+                        let err = build_detail_err(BuildRule::GRS18, package.manifest_path.as_str().to_string(),  format!(
                             "package {} use no explicit version for dependency {}.",
                             package.name, dep.name
                         ));

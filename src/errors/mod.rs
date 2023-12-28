@@ -24,7 +24,8 @@ pub struct Detail {
     pub description: String,
     pub level: output::Level,
     pub location: String,
-    pub errno: String,
+    pub errno: u32,
+    pub check_type: String,
 }
 
 impl Display for Detail {
@@ -62,37 +63,44 @@ impl From<BuildRule> for Detail {
         match value {
             BuildRule::GRS05 => Detail {
                 level: Level::Rule,
-                errno: String::from("31004"),
+                errno: 31004_u32,
+                check_type: String:: from("build tool"),
                 ..Detail::default()
             },
             BuildRule::GRS06 => Detail {
                 level: Level::Suggestion,
-                errno: String::from("31005"),
+                errno: 31005_u32,
+                check_type: String:: from("build tool"),
                 ..Detail::default()
             },
             BuildRule::GRS08 => Detail {
                 level: Level::Rule,
-                errno: String::from("31007"),
+                errno: 31007_u32,
+                check_type: String:: from("build configuration"),
                 ..Detail::default()
             },
             BuildRule::GRS10 => Detail {
                 level: Level::Rule,
-                errno: String::from("31009"),
+                errno: 31009_u32,
+                check_type: String:: from("build configuration"),
                 ..Detail::default()
             },
             BuildRule::GRS17 => Detail {
                 level: Level::Rule,
-                errno: String::from("31016"),
+                errno: 31016_u32,
+                check_type: String:: from("packaging and pushlishing"),
                 ..Detail::default()
             },
             BuildRule::GRS18 => Detail {
                 level: Level::Rule,
-                errno: String::from("31017"),
+                errno: 31017_u32,
+                check_type: String:: from("packaging and pushlishing"),
                 ..Detail::default()
             },
             BuildRule::GRS20 => Detail {
                 level: Level::Rule,
-                errno: String::from("31019"),
+                errno: 31019_u32,
+                check_type: String:: from("packaging and pushlishing"),
                 ..Detail::default()
             },
         }

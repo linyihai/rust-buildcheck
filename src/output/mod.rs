@@ -13,12 +13,12 @@ pub struct Output {
 pub struct ErrDescription {
     defect_type: String,
     detail: String,
-    errno: String,
+    errno: u32,
     level: Level,
     line: u32,
     location: String,
     #[serde(rename = "type")]
-    _type: String,
+    check_type: String,
 }
 
 #[derive(Clone, Copy, Serialize, Deserialize, Debug, Default)]
@@ -40,7 +40,8 @@ impl From<Vec<&CheckError>> for Output {
                         detail: detail.description.clone(),
                         location: detail.location.clone(),
                         level: detail.level,
-                        errno: detail.errno.clone(),
+                        errno: detail.errno,
+                        check_type: detail.check_type.clone(),
                         ..Default::default()
                     }),
                     _ => None,
