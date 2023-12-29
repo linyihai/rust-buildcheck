@@ -18,7 +18,7 @@ impl RuleChecker for DependenciesCheck {
                     if !is_explicit_version(&dep.req);
                     then {
                         let err = build_detail_err(BuildRule::GRS18, package.manifest_path.as_str().to_string(),  format!(
-                            "package {} use no explicit version for dependency {}.",
+                            "package `{}` use no explicit version for dependency `{}`.",
                             package.name, dep.name
                         ));
                         check_res.push(err);

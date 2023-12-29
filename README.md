@@ -5,7 +5,7 @@
 命令行参数：
 
 ```shell
-$ build-inspector --help
+$ build-inspector[.exe] --help
 Usage: build-inspector [OPTIONS]
 
 Options:
@@ -23,7 +23,7 @@ Options:
 在rust项目根目录下直接执行rust-bulidcheck二进制文件，输出实例:
 
 ```shell
-$ build-inspector
+$ build-inspector[.exe]
 package name: build
 crate name `build-inspector` not start with ylong_ or huawei_ .
 package `build-inspector` contains `license` field
@@ -46,5 +46,21 @@ the output file is rust_buildcheck_output.json
 
 ## 注意事项  
 
-- 工具依赖于`cargo_metadata`获取rust项目信息，要求运行本工具系统上安装rust工具链，见[Rust内源安装工具链](https://openx.huawei.com/Rust/download)
-- 注意glibc版本问题，高版本glibc构建出来的二进制在低版本上运行不了，如默认情况ubuntu22构建的rust二进制无法在ubuntu18上执行。
+- 工具依赖于`cargo_metadata`获取rust项目信息，要求运行本工具系统上安装rust工具链，见[Rust内源安装工具链](https://openx.huawei.com/communityHome/postDetail?postId=2688&id=90)
+- 注意glibc版本问题，高版本glibc构建出来的二进制在低版本上运行不了，如默认情况ubuntu22(glibc 2.35)构建的rust二进制无法在ubuntu18(glibc 2.27)执行。
+
+常见Linux发行版glibc版本：
+
+|  Distro   |  glibc  |
+|   ---     |   ---   |
+| CentOS 7  |  2.17   |
+| CentOS 8  |  2.28   |
+| Debian 9  |  2.24   |
+| Debian 10 |  2.28   |
+| Debian 11 |  2.31   |
+| Ubuntu 16.04 LTS | 2.23 |
+| Ubuntu 18.04 LTS | 2.27 |
+| Ubuntu 20.04 LTS | 2.31 |
+| Ubuntu 22.04 LTS | 2.35 |
+
+更多[glibc版本信息](https://repology.org/project/glibc/versions)

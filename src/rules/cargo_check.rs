@@ -21,7 +21,7 @@ impl LockCheck {
         if status.is_index_new() || status.is_wt_new() {
             return build_detail_err(
                 BuildRule::GRS08,
-                repo_root.join("Cargo.toml").display().to_string(),
+                parent_path.join("Cargo.toml").display().to_string(),
                 format!("`{}` was not committed in package.", toml_file.display()),
             );
         }

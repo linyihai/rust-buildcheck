@@ -38,7 +38,7 @@ impl BuildRuleChecker {
         .features(CargoOpt::AllFeatures)
         .other_options(vec!["--offline".to_string()])
         .manifest_path(&args.manifest_path)
-        .exec().with_context(|| "get cargo metadata failed, check cargo is installed and the contents of Cargo.toml are correct")?;
+        .exec().with_context(|| "get cargo metadata failed, check if cargo is installed and the contents of Cargo.toml are correct")?;
 
         Ok(BuildRuleChecker {
             rules: vec![
