@@ -1,13 +1,11 @@
-mod commands;
-mod errors;
-mod output;
 mod rules;
+mod utils;
 
 use anyhow::Result;
 use clap::Parser;
 
 fn main() -> Result<()> {
-    let args = commands::Args::parse();
+    let args = utils::commands::Args::parse();
     let checker = rules::BuildRuleChecker::new(args)?;
     checker.check_rule()?;
     Ok(())

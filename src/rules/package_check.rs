@@ -1,9 +1,12 @@
 use std::fs;
 
 use super::RuleChecker;
-use crate::commands::pack_crate;
-use crate::commands::Args;
-use crate::errors::{build_detail_err, BuildRule, CheckResult};
+use crate::utils::{
+    build_rule::BuildRule,
+    commands::{pack_crate, Args},
+    custom_error::{build_detail_err, CheckResult},
+    toml::{cargo_toml::read_toml_file, display_line},
+};
 use anyhow::Context;
 use cargo_metadata::Metadata;
 
@@ -26,7 +29,8 @@ impl PackageCheck {
             return build_detail_err(
                 BuildRule::GRS20,
                 dir.display().to_string(),
-                format!("crate `{}` size over {}MB.", &create_name, max_size),
+                format!("package `{}` size over {}MB.", &create_name, max_size),
+                0,
             );
         }
         Ok(())
@@ -37,13 +41,22 @@ impl PackageCheck {
 
         for package in &m.packages {
             if !is_valid_package_name(&package.name) {
+                let (toml_config, contents) = read_toml_file(package.manifest_path.as_std_path());
+                let line = if let Some(name) = toml_config.package.name {
+                    let start = name.span().start;
+                    display_line(contents.as_bytes(), start)
+                } else {
+                    0
+                };
+
                 check_res.push(build_detail_err(
                     BuildRule::GRS17,
                     package.manifest_path.as_str().to_string(),
                     format!(
-                        "crate name `{}` not start with ylong_ or huawei_ .",
+                        "package name `{}` not start with ylong_ or huawei_ .",
                         package.name
                     ),
+                    line,
                 ));
             }
         }

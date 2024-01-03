@@ -1,31 +1,14 @@
+use super::output::{self, Level};
 use std::fmt::{self, Display};
-
-use crate::output::{self, Level};
-use anyhow::Result;
-use cargo_metadata::Error as MetaDataError;
-use git2::Error as Git2Error;
-
-pub type CheckResult<T> = Result<T, CheckError>;
-// custom build check error which contains MetadataError
-#[derive(Debug, thiserror::Error)]
-pub enum CheckError {
-    #[error("build check failed: {0}")]
-    CheckDetail(Detail),
-    #[error("{0}")]
-    MetaData(#[from] MetaDataError),
-    #[error("{0}")]
-    Git2(#[from] Git2Error),
-    #[error("{0}")]
-    AnyHow(#[from] anyhow::Error),
-}
 
 #[derive(Debug, Default)]
 pub struct Detail {
     pub description: String,
     pub level: output::Level,
     pub location: String,
-    pub errno: u32,
+    pub errno: usize,
     pub check_type: String,
+    pub line: usize,
 }
 
 impl Display for Detail {
@@ -63,44 +46,44 @@ impl From<BuildRule> for Detail {
         match value {
             BuildRule::GRS05 => Detail {
                 level: Level::Rule,
-                errno: 31004_u32,
-                check_type: String:: from("build tool"),
+                errno: 31004_usize,
+                check_type: String::from("build tool"),
                 ..Detail::default()
             },
             BuildRule::GRS06 => Detail {
                 level: Level::Suggestion,
-                errno: 31005_u32,
-                check_type: String:: from("build tool"),
+                errno: 31005_usize,
+                check_type: String::from("build tool"),
                 ..Detail::default()
             },
             BuildRule::GRS08 => Detail {
                 level: Level::Rule,
-                errno: 31007_u32,
-                check_type: String:: from("build configuration"),
+                errno: 31007_usize,
+                check_type: String::from("build configuration"),
                 ..Detail::default()
             },
             BuildRule::GRS10 => Detail {
                 level: Level::Rule,
-                errno: 31009_u32,
-                check_type: String:: from("build configuration"),
+                errno: 31009_usize,
+                check_type: String::from("build configuration"),
                 ..Detail::default()
             },
             BuildRule::GRS17 => Detail {
                 level: Level::Rule,
-                errno: 31016_u32,
-                check_type: String:: from("packaging and pushlishing"),
+                errno: 31016_usize,
+                check_type: String::from("packaging and pushlishing"),
                 ..Detail::default()
             },
             BuildRule::GRS18 => Detail {
                 level: Level::Rule,
-                errno: 31017_u32,
-                check_type: String:: from("packaging and pushlishing"),
+                errno: 31017_usize,
+                check_type: String::from("packaging and pushlishing"),
                 ..Detail::default()
             },
             BuildRule::GRS20 => Detail {
                 level: Level::Rule,
-                errno: 31019_u32,
-                check_type: String:: from("packaging and pushlishing"),
+                errno: 31019_usize,
+                check_type: String::from("packaging and pushlishing"),
                 ..Detail::default()
             },
         }
@@ -108,23 +91,17 @@ impl From<BuildRule> for Detail {
 }
 
 impl Detail {
-    pub fn build(build_rule: BuildRule, location: String, description: String) -> Self {
+    pub fn build(
+        build_rule: BuildRule,
+        location: String,
+        description: String,
+        line: usize,
+    ) -> Self {
         Self {
             location,
             description,
+            line,
             ..Detail::from(build_rule)
         }
     }
-}
-
-pub fn build_detail_err(
-    build_rule: BuildRule,
-    location: String,
-    description: String,
-) -> CheckResult<()> {
-    Err(CheckError::CheckDetail(Detail::build(
-        build_rule,
-        location,
-        description,
-    )))
 }
