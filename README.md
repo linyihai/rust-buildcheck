@@ -5,8 +5,8 @@
 命令行参数：
 
 ```shell
-$ rust-buildcheck.exe --help
-Usage: rust-buildcheck.exe [OPTIONS]
+$ build-inspector[.exe] --help
+Usage: build-inspector [OPTIONS]
 
 Options:
   -m, --manifest-path <MANIFEST_PATH>  the path of Cargo.toml in the root package directory [default: Cargo.toml]
@@ -23,22 +23,16 @@ Options:
 在rust项目根目录下直接执行rust-bulidcheck二进制文件，输出实例:
 
 ```shell
-$ rust-buildcheck.exe
-package name: _clippytest
-build check failed: [G.RS.17] crate name `_clippytest` not start with ylong_ or huawei_ .
-build check failed: [G.RS.05] E:\rust\clippytest\Cargo.toml has no edition field, please add a edition like `edition = 2021`.
-build check failed: [G.RS.06] E:\rust\clippytest\Cargo.toml no newest rust editon.
-build check failed: [G.RS.18] package _clippytest use no explicit version for dependency regex.
+$ build-inspector[.exe]
+package name: build
+crate name `build-inspector` not start with ylong_ or huawei_ .
+package `build-inspector` contains `license` field
+the output file is rust_buildcheck_output.json
 ```
+- **package name: build-inspector** 为检查Rust项目的包名
+- `rust_buildcheck_output.json` 为最后输出的构建检查结果文件，可以通过`--out-file`参数自定义输出文件名
+- 如果执行失败，返回错误码1(如shell中执行echo $? 返回1)
 
-其中G.RS.18为Rust构建规范对应条目
-
-如果执行失败，返回错误码1
-
-```shell
-$ echo $?
-1
-```
 
 ## 支持条目
 
@@ -49,4 +43,24 @@ $ echo $?
 - G.RS.17
 - G.RS.18
 - G.RS.20
-  
+
+## 注意事项  
+
+- 工具依赖于`cargo_metadata`获取rust项目信息，要求运行本工具系统上安装rust工具链，见[Rust内源安装工具链](https://openx.huawei.com/communityHome/postDetail?postId=2688&id=90)
+- 注意glibc版本问题，高版本glibc构建出来的二进制在低版本上运行不了，如默认情况ubuntu22(glibc 2.35)构建的rust二进制无法在ubuntu18(glibc 2.27)执行。
+
+常见Linux发行版glibc版本：
+
+|  Distro   |  glibc  |
+|   ---     |   ---   |
+| CentOS 7  |  2.17   |
+| CentOS 8  |  2.28   |
+| Debian 9  |  2.24   |
+| Debian 10 |  2.28   |
+| Debian 11 |  2.31   |
+| Ubuntu 16.04 LTS | 2.23 |
+| Ubuntu 18.04 LTS | 2.27 |
+| Ubuntu 20.04 LTS | 2.31 |
+| Ubuntu 22.04 LTS | 2.35 |
+
+更多[glibc版本信息](https://repology.org/project/glibc/versions)

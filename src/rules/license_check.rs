@@ -13,7 +13,7 @@ impl RuleChecker for LicenseCheck {
             if package.license.is_some() {
                 let err = build_detail_err(
                     BuildRule::GRS10,
-                    "".to_string(),
+                    package.manifest_path.as_str().to_string(),
                     format!("package `{}` contains `license` field", package.name),
                 );
                 check_res.push(err)
@@ -21,7 +21,7 @@ impl RuleChecker for LicenseCheck {
             if package.license_file.is_some() {
                 let err = build_detail_err(
                     BuildRule::GRS10,
-                    "".to_string(),
+                    package.manifest_path.as_str().to_string(),
                     format!("package `{}` contains `license-file` field", package.name),
                 );
                 check_res.push(err)

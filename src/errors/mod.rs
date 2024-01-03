@@ -24,6 +24,8 @@ pub struct Detail {
     pub description: String,
     pub level: output::Level,
     pub location: String,
+    pub errno: u32,
+    pub check_type: String,
 }
 
 impl Display for Detail {
@@ -59,12 +61,46 @@ impl fmt::Display for BuildRule {
 impl From<BuildRule> for Detail {
     fn from(value: BuildRule) -> Self {
         match value {
-            BuildRule::GRS06 => Detail {
-                level: Level::Suggestion,
+            BuildRule::GRS05 => Detail {
+                level: Level::Rule,
+                errno: 31004_u32,
+                check_type: String:: from("build tool"),
                 ..Detail::default()
             },
-            _ => Detail {
+            BuildRule::GRS06 => Detail {
+                level: Level::Suggestion,
+                errno: 31005_u32,
+                check_type: String:: from("build tool"),
+                ..Detail::default()
+            },
+            BuildRule::GRS08 => Detail {
                 level: Level::Rule,
+                errno: 31007_u32,
+                check_type: String:: from("build configuration"),
+                ..Detail::default()
+            },
+            BuildRule::GRS10 => Detail {
+                level: Level::Rule,
+                errno: 31009_u32,
+                check_type: String:: from("build configuration"),
+                ..Detail::default()
+            },
+            BuildRule::GRS17 => Detail {
+                level: Level::Rule,
+                errno: 31016_u32,
+                check_type: String:: from("packaging and pushlishing"),
+                ..Detail::default()
+            },
+            BuildRule::GRS18 => Detail {
+                level: Level::Rule,
+                errno: 31017_u32,
+                check_type: String:: from("packaging and pushlishing"),
+                ..Detail::default()
+            },
+            BuildRule::GRS20 => Detail {
+                level: Level::Rule,
+                errno: 31019_u32,
+                check_type: String:: from("packaging and pushlishing"),
                 ..Detail::default()
             },
         }
@@ -86,10 +122,9 @@ pub fn build_detail_err(
     location: String,
     description: String,
 ) -> CheckResult<()> {
-    let _descrption = format!("{} {}", &build_rule, description);
     Err(CheckError::CheckDetail(Detail::build(
         build_rule,
         location,
-        _descrption,
+        description,
     )))
 }

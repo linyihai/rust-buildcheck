@@ -18,6 +18,7 @@ pub fn pack_crate(manifest_path: &Path) -> CheckResult<()> {
             "--allow-dirty",
             "--no-verify",
             "--quiet",
+            "--offline",
             "--manifest-path",
         ])
         .arg(manifest_path.as_os_str());

@@ -22,6 +22,13 @@ thiserror = "1.0.50"
 toml = "0.8.6"
 anyhow = "1.0.75"
 
+[target.'cfg(target_os = "linux")'.dependencies]
+openssl = { version = "0.10.62", features = ["vendored"] }
+libc = "0.2.150"
+libgit2-sys = { version = "0.16.1", features = ["vendored"] }
+curl = { version = "0.4.44", features = ["static-curl", "static-ssl"] }
+git2-curl = "0.19.0"
+curl-sys = "0.4.70"
 
 [profile.release]
 codegen-units = 1

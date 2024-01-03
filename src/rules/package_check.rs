@@ -39,7 +39,7 @@ impl PackageCheck {
             if !is_valid_package_name(&package.name) {
                 check_res.push(build_detail_err(
                     BuildRule::GRS17,
-                    "".to_string(),
+                    package.manifest_path.as_str().to_string(),
                     format!(
                         "crate name `{}` not start with ylong_ or huawei_ .",
                         package.name

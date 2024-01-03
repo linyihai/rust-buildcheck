@@ -30,11 +30,15 @@ pub struct BuildRuleChecker {
 impl BuildRuleChecker {
     pub fn new(args: Args) -> CheckResult<BuildRuleChecker> {
         _ = File::create(&args.output_file).with_context(|| "output_file path invalid")?;
+        fs::metadata(&args.manifest_path)
+            .with_context(|| "please check you -m flag, the Cargo.toml path may be invalid")?;
+
         let metadata = MetadataCommand::new()
         .no_deps()
         .features(CargoOpt::AllFeatures)
+        .other_options(vec!["--offline".to_string()])
         .manifest_path(&args.manifest_path)
-        .exec().with_context(|| "get cargo metadata failed, please check you -m flag, the Cargo.toml path may be invalid")?;
+        .exec().with_context(|| "get cargo metadata failed, check if cargo is installed and the contents of Cargo.toml are correct")?;
 
         Ok(BuildRuleChecker {
             rules: vec![
