@@ -19,7 +19,7 @@ steps:
     - checkout # 检出当前源码库
   BUILD: # ......
     - build_execute:
-        command: sh ./cloudbuild/build.sh
+        command: sh .cloudbuild/build.sh
         check: false
   POST_BUILD:
     - artget:
