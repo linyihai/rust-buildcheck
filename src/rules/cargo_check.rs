@@ -1,6 +1,9 @@
 use super::RuleChecker;
-use crate::commands::Args;
-use crate::errors::{build_detail_err, BuildRule, CheckError, CheckResult};
+use crate::utils::{
+    build_rule::BuildRule,
+    commands::Args,
+    custom_error::{build_detail_err, CheckError, CheckResult},
+};
 use cargo_metadata::{Metadata, Package};
 
 #[derive(Debug, Clone, Default)]
@@ -23,6 +26,7 @@ impl LockCheck {
                 BuildRule::GRS08,
                 parent_path.join("Cargo.toml").display().to_string(),
                 format!("`{}` was not committed in package.", toml_file.display()),
+                0,
             );
         }
         Ok(())
@@ -41,7 +45,6 @@ impl RuleChecker for LockCheck {
                     return check_res;
                 }
                 for package in &m.packages {
-                    println!("package name: {}", package.name);
                     if let Ok(repo) = &res {
                         check_res.push(self.check_file(package, repo));
                     }

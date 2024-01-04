@@ -1,6 +1,11 @@
 use super::RuleChecker;
-use crate::commands::Args;
-use crate::errors::{build_detail_err, BuildRule, CheckResult};
+use crate::utils::{
+    build_rule::BuildRule,
+    commands::Args,
+    custom_error::{build_detail_err, CheckResult},
+    toml::{cargo_toml::read_toml_file, display_line},
+};
+use cargo_metadata::DependencyKind;
 use cargo_metadata::Metadata;
 use if_chain::if_chain;
 
@@ -17,10 +22,39 @@ impl RuleChecker for DependenciesCheck {
                     if !source.starts_with("git");
                     if !is_explicit_version(&dep.req);
                     then {
-                        let err = build_detail_err(BuildRule::GRS18, package.manifest_path.as_str().to_string(),  format!(
-                            "package `{}` use no explicit version for dependency `{}`.",
-                            package.name, dep.name
-                        ));
+                        let (toml_config, contents) = read_toml_file(package.manifest_path.as_std_path());
+                        let (toml_dependencies, section) = match dep.kind {
+                            DependencyKind::Normal if dep.target.is_none() => (&toml_config.dependencies, ""),
+                            DependencyKind::Build if dep.target.is_none() => (&toml_config.build_dependencies, "build-"),
+                            DependencyKind::Development if dep.target.is_none() => (&toml_config.dev_dependencies, "dev-"),
+                            _ => (&None, "")
+                        };
+
+                        let detail = {
+                            if dep.target.is_some() {
+                                format!(
+                                    "package `{}` use a inexplicit version dependency `{}` with target `{}`, please replace it with a explicit version",
+                                    package.name, dep.name, dep.target.as_ref().unwrap()
+                                )
+                            } else {
+                                format!(
+                                    "package `{}` use a inexplicit version {}dependency `{}`, please replace it with a explicit version",
+                                    package.name, section, dep.name
+                                )
+                            }
+                        };
+
+                        let line = if_chain! {
+                            if let Some(dependencies) = toml_dependencies;
+                            if let Some(v) = dependencies.get(&dep.name);
+                            then {
+                                display_line(contents.as_bytes(), v.span().start)
+                            } else {
+                                0
+                            }
+                        };
+
+                        let err = build_detail_err(BuildRule::GRS18, package.manifest_path.as_str().to_string(),  detail, line);
                         check_res.push(err);
                     }
                 }
