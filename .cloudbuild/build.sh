@@ -1,5 +1,10 @@
+# Update rust toolchain
+rustup toolchain uninstall stable
+rustup toolchain install stable --no-self-update
+rustup default stable
+
 # Run `cargo build --release`
-cargo build --release
+cargo build --release --locked
 
 # Package 
 if [-z "${version}"]; then
