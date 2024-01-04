@@ -1,25 +1,11 @@
 use super::RuleChecker;
-use crate::commands::Args;
-use crate::errors::{build_detail_err, BuildRule, CheckResult};
+use crate::utils::{
+    build_rule::BuildRule,
+    commands::Args,
+    custom_error::{build_detail_err, CheckResult},
+    toml::{cargo_toml::read_toml_file, display_line},
+};
 use cargo_metadata::{Edition, Metadata};
-use serde_derive::Deserialize;
-use std::fs;
-use std::path::Path;
-
-#[derive(Deserialize, Debug)]
-struct TomlConfig {
-    package: PackageConfig,
-}
-
-#[derive(Deserialize, Debug)]
-struct PackageConfig {
-    edition: Option<Edition>,
-}
-
-fn read_toml_file(path: &Path) -> TomlConfig {
-    let contents = fs::read_to_string(path).unwrap();
-    toml::from_str(&contents).unwrap()
-}
 
 #[derive(Debug, Clone, Default)]
 pub struct EditionCheck;
@@ -28,28 +14,37 @@ impl RuleChecker for EditionCheck {
     fn check(&self, m: &Metadata, _: &Args) -> Vec<CheckResult<()>> {
         let mut check_res = vec![];
         for package in &m.packages {
-            if package.edition == Edition::E2015 {
-                let toml_config = read_toml_file(package.manifest_path.as_std_path());
-                if toml_config.package.edition.is_none() {
-                    check_res.push(build_detail_err(
-                        BuildRule::GRS05,
-                        package.manifest_path.as_str().to_string(),
-                        format!(
-                            "{} has no edition field, please add a edition like `edition = 2021`.",
-                            package.manifest_path.file_name().unwrap()
-                        ),
-                    ));
-                }
+            let (toml_config, contents) = read_toml_file(package.manifest_path.as_std_path());
+            let (line, edition) = if let Some(edition) = toml_config.package.edition {
+                let start = edition.span().start;
+                let line = display_line(contents.as_bytes(), start);
+                (line, Some(edition))
+            } else {
+                (0, None)
+            };
+
+            if package.edition == Edition::E2015 && edition.is_none() {
+                let detail =
+                    "no `edition` field in Cargo.toml, please add a edition like `edition = 2021`.";
+                check_res.push(build_detail_err(
+                    BuildRule::GRS05,
+                    package.manifest_path.as_str().to_string(),
+                    detail.to_string(),
+                    line,
+                ));
+                continue;
             }
+
             if package.edition < Edition::E2021 {
+                let detail = "the `edition` field in Cargo.toml is outdated, please update it with new edition, like `2021`";
                 check_res.push(build_detail_err(
                     BuildRule::GRS06,
                     package.manifest_path.as_str().to_string(),
-                    format!("{} no newest rust editon.", package.manifest_path.file_name().unwrap()),
+                    detail.to_string(),
+                    line,
                 ));
             }
         }
-
         check_res
     }
 }

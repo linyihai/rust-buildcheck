@@ -4,18 +4,19 @@ mod license_check;
 mod package_check;
 mod rust_edition_check;
 
-use std::fs::{self, File};
-
-use crate::commands::Args;
-use crate::errors::{CheckError, CheckResult};
-use crate::output;
 use crate::rules::license_check::LicenseCheck;
+use crate::utils::{
+    commands::Args,
+    custom_error::{CheckError, CheckResult},
+    output::Output,
+};
 use anyhow::{Context, Result};
 use cargo_check::LockCheck;
 use cargo_metadata::{CargoOpt, Metadata, MetadataCommand};
 use dependencies_check::DependenciesCheck;
 use package_check::PackageCheck;
 use rust_edition_check::EditionCheck;
+use std::fs::{self, File};
 
 trait RuleChecker {
     fn check(&self, m: &Metadata, args: &Args) -> Vec<CheckResult<()>>;
@@ -71,7 +72,7 @@ impl BuildRuleChecker {
 
         let is_check_ok = &check_failed_err.is_empty();
         println!("the output file is {}", &self.args.output_file);
-        let output = serde_json::to_string(&output::Output::from(check_failed_err)).unwrap();
+        let output = serde_json::to_string(&Output::from(check_failed_err)).unwrap();
         fs::write(&self.args.output_file, output)
             .with_context(|| "save check result to file failed")?;
         if !is_check_ok {

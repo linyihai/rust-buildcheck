@@ -1,24 +1,24 @@
-use crate::errors::CheckError;
+use super::custom_error::CheckError;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Output {
-    build_check_type: String,
-    version: String,
-    name: String,
-    errlist: Vec<ErrDescription>,
+    pub build_check_type: String,
+    pub version: String,
+    pub name: String,
+    pub errlist: Vec<ErrDescription>,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize, Debug)]
 pub struct ErrDescription {
-    defect_type: String,
-    detail: String,
-    errno: u32,
-    level: Level,
-    line: u32,
-    location: String,
+    pub defect_type: String,
+    pub detail: String,
+    pub errno: usize,
+    pub level: Level,
+    pub line: usize,
+    pub location: String,
     #[serde(rename = "type")]
-    check_type: String,
+    pub check_type: String,
 }
 
 #[derive(Clone, Copy, Serialize, Deserialize, Debug, Default)]
@@ -39,9 +39,10 @@ impl From<Vec<&CheckError>> for Output {
                     CheckError::CheckDetail(detail) => Some(ErrDescription {
                         detail: detail.description.clone(),
                         location: detail.location.clone(),
-                        level: detail.level,
-                        errno: detail.errno,
                         check_type: detail.check_type.clone(),
+                        errno: detail.errno,
+                        line: detail.line,
+                        level: detail.level,
                         ..Default::default()
                     }),
                     _ => None,
