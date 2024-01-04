@@ -46,6 +46,7 @@ impl From<BuildRule> for Detail {
         match value {
             BuildRule::GRS05 => Detail {
                 level: Level::Rule,
+                // 用来识别具体规范编码，见[开发预定错误码](https://onebox.huawei.com/v/849036f19356874c5cf463c5c01dfe9d?type=1) 
                 errno: 31004_usize,
                 check_type: String::from("build tool"),
                 ..Detail::default()
