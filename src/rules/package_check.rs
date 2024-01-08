@@ -1,5 +1,3 @@
-use std::fs;
-
 use super::RuleChecker;
 use crate::utils::{
     build_rule::BuildRule,
@@ -9,18 +7,19 @@ use crate::utils::{
 };
 use anyhow::Context;
 use cargo_metadata::Metadata;
+use std::fs;
 
 #[derive(Debug, Clone, Default)]
 pub struct PackageCheck;
 
 impl PackageCheck {
     // check crate size whether over 10MB
-    fn check_package_size(&self, m: &Metadata, max_size: f32) -> CheckResult<()> {
+    fn check_package_size(&self, args: &Args, m: &Metadata, max_size: f32) -> CheckResult<()> {
         let root_package = m.root_package().unwrap();
         let create_name = format!("{}-{}.crate", root_package.name, root_package.version);
         let dir = root_package.manifest_path.parent().unwrap().as_std_path();
         let crate_path = dir.join("target").join("package").join(&create_name);
-        pack_crate(root_package.manifest_path.as_std_path())?;
+        pack_crate(args, root_package.manifest_path.as_std_path())?;
         let crate_size = fs::metadata(crate_path)
             .with_context(|| "cannot find the packed crate")?
             .len();
@@ -67,7 +66,7 @@ impl PackageCheck {
 impl RuleChecker for PackageCheck {
     fn check(&self, m: &Metadata, args: &Args) -> Vec<CheckResult<()>> {
         let mut check_res = vec![];
-        let res = self.check_package_size(m, args.crate_size);
+        let res = self.check_package_size(args, m, args.crate_size);
         if res.is_err() {
             check_res.push(res);
         }

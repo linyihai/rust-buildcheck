@@ -34,12 +34,17 @@ impl BuildRuleChecker {
         fs::metadata(&args.manifest_path)
             .with_context(|| "please check you -m flag, the Cargo.toml path may be invalid")?;
 
-        let metadata = MetadataCommand::new()
-        .no_deps()
-        .features(CargoOpt::AllFeatures)
-        .other_options(vec!["--offline".to_string()])
-        .manifest_path(&args.manifest_path)
-        .exec().with_context(|| "get cargo metadata failed, check if cargo is installed and the contents of Cargo.toml are correct")?;
+        let mut binding = MetadataCommand::new();
+        binding
+            .no_deps()
+            .features(CargoOpt::AllFeatures)
+            .manifest_path(&args.manifest_path);
+
+        if args.offline {
+            binding.other_options(vec!["--offline".to_string()]);
+        }
+
+        let metadata = binding.exec().with_context(|| "get cargo metadata failed, check if cargo is installed and the contents of Cargo.toml are correct")?;
 
         Ok(BuildRuleChecker {
             rules: vec![

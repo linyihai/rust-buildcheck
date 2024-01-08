@@ -11,7 +11,10 @@ pub struct Args {
     /// the packed crate size(MB)
     #[arg(short, long, default_value_t = 10.0)]
     pub crate_size: f32,
-    /// the output file,
+    /// the output file
     #[arg(short, long, default_value_t = String::from("rust_buildcheck_output.json"))]
     pub output_file: String,
+    /// whether to use offline mode
+    #[arg(long)]
+    pub offline: bool,
 }
