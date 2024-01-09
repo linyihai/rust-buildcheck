@@ -1,6 +1,9 @@
 use super::output::{self, Level};
 use std::fmt::{self, Display};
 
+static BUILD_TOOL: &str = "build tool";
+static BUILD_CONFIGURATION: &str = "build configuration";
+static PACKAGING_PUBLISHING: &str = "packaging and pushlishing";
 #[derive(Debug, Default)]
 pub struct Detail {
     pub description: String,
@@ -47,43 +50,43 @@ impl From<BuildRule> for Detail {
             BuildRule::GRS05 => Detail {
                 level: Level::Rule,
                 errno: 31004_usize,
-                check_type: String::from("build tool"),
+                check_type: String::from(BUILD_TOOL),
                 ..Detail::default()
             },
             BuildRule::GRS06 => Detail {
                 level: Level::Suggestion,
                 errno: 31005_usize,
-                check_type: String::from("build tool"),
+                check_type: String::from(BUILD_TOOL),
                 ..Detail::default()
             },
             BuildRule::GRS08 => Detail {
                 level: Level::Rule,
                 errno: 31007_usize,
-                check_type: String::from("build configuration"),
+                check_type: String::from(BUILD_CONFIGURATION),
                 ..Detail::default()
             },
             BuildRule::GRS10 => Detail {
                 level: Level::Rule,
                 errno: 31009_usize,
-                check_type: String::from("build configuration"),
+                check_type: String::from(BUILD_CONFIGURATION),
                 ..Detail::default()
             },
             BuildRule::GRS17 => Detail {
                 level: Level::Rule,
                 errno: 31016_usize,
-                check_type: String::from("packaging and pushlishing"),
+                check_type: String::from(PACKAGING_PUBLISHING),
                 ..Detail::default()
             },
             BuildRule::GRS18 => Detail {
                 level: Level::Rule,
                 errno: 31017_usize,
-                check_type: String::from("packaging and pushlishing"),
+                check_type: String::from(PACKAGING_PUBLISHING),
                 ..Detail::default()
             },
             BuildRule::GRS20 => Detail {
                 level: Level::Rule,
                 errno: 31019_usize,
-                check_type: String::from("packaging and pushlishing"),
+                check_type: String::from(PACKAGING_PUBLISHING),
                 ..Detail::default()
             },
         }

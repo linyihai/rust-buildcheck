@@ -6,7 +6,7 @@ mod rust_edition_check;
 
 use crate::rules::license_check::LicenseCheck;
 use crate::utils::{
-    commands::Args,
+    commands::{cargo::cargo_fetch, Args},
     custom_error::{CheckError, CheckResult},
     output::Output,
 };
@@ -17,6 +17,7 @@ use dependencies_check::DependenciesCheck;
 use package_check::PackageCheck;
 use rust_edition_check::EditionCheck;
 use std::fs::{self, File};
+use std::path::Path;
 
 trait RuleChecker {
     fn check(&self, m: &Metadata, args: &Args) -> Vec<CheckResult<()>>;
@@ -33,6 +34,11 @@ impl BuildRuleChecker {
         _ = File::create(&args.output_file).with_context(|| "output_file path invalid")?;
         fs::metadata(&args.manifest_path)
             .with_context(|| "please check you -m flag, the Cargo.toml path may be invalid")?;
+
+        if !args.offline {
+            println!("start to fetch dependencies, make sure network can access registry");
+            cargo_fetch(Path::new(&args.manifest_path))?;
+        }
 
         let metadata = MetadataCommand::new()
         .no_deps()

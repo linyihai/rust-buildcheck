@@ -29,7 +29,10 @@ impl RuleChecker for LicenseCheck {
                 let err = build_detail_err(
                     BuildRule::GRS10,
                     package.manifest_path.as_str().to_string(),
-                    format!("package `{}` contains `license` field in Cargo.toml.", package.name),
+                    format!(
+                        "package `{}` contains `license` field in Cargo.toml.",
+                        package.name
+                    ),
                     line,
                 );
                 check_res.push(err)
@@ -44,7 +47,10 @@ impl RuleChecker for LicenseCheck {
                 let err = build_detail_err(
                     BuildRule::GRS10,
                     package.manifest_path.as_str().to_string(),
-                    format!("package `{}` contains `license-file` field in Cargo.toml.", package.name),
+                    format!(
+                        "package `{}` contains `license-file` field in Cargo.toml.",
+                        package.name
+                    ),
                     line,
                 );
                 check_res.push(err)

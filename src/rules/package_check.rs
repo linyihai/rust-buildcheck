@@ -3,7 +3,7 @@ use std::fs;
 use super::RuleChecker;
 use crate::utils::{
     build_rule::BuildRule,
-    commands::{pack_crate, Args},
+    commands::{cargo::cargo_package, Args},
     custom_error::{build_detail_err, CheckResult},
     toml::{cargo_toml::read_toml_file, display_line},
 };
@@ -20,7 +20,7 @@ impl PackageCheck {
         let create_name = format!("{}-{}.crate", root_package.name, root_package.version);
         let dir = root_package.manifest_path.parent().unwrap().as_std_path();
         let crate_path = dir.join("target").join("package").join(&create_name);
-        pack_crate(root_package.manifest_path.as_std_path())?;
+        cargo_package(root_package.manifest_path.as_std_path())?;
         let crate_size = fs::metadata(crate_path)
             .with_context(|| "cannot find the packed crate")?
             .len();
