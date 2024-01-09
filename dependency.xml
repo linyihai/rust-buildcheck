@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+	<artifact>
+		<versionType>Component</versionType>
+		<repoType>Generic</repoType>
+		<id>
+			<offering>MemSafePro</offering>
+			<name>build-inspector</name>
+			<version>${version}</version>
+		</id>
+		<isClear>N</isClear>
+		<copies>
+			<copy>
+				<source>${source_path}</source>
+				<dest>${dest_path}</dest>
+			</copy>
+		</copies>
+	</artifact>
+</project>
+
