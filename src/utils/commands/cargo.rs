@@ -23,7 +23,13 @@ pub fn cargo_package(manifest_path: &Path) -> CheckResult<()> {
             "--manifest-path",
         ])
         .arg(manifest_path.as_os_str());
-    command.output().with_context(|| "cargo package failed")?;
+    let output = command.output().with_context(|| "cargo package failed")?;
+    if !output.status.success() {
+        println!(
+            "cargo package exec failed: {}",
+            String::from_utf8(output.stderr).unwrap_or("unknown error".to_string())
+        );
+    };
     Ok(())
 }
 
@@ -32,6 +38,12 @@ pub fn cargo_fetch(manifest_path: &Path) -> CheckResult<()> {
     command
         .args(["fetch", "--quiet", "--manifest-path"])
         .arg(manifest_path);
-    command.output().with_context(|| "cargo fetch failed")?;
+    let output = command.output().with_context(|| "cargo fetch failed")?;
+    if !output.status.success() {
+        println!(
+            "cargo fetch exec failed: {}",
+            String::from_utf8(output.stderr).unwrap_or("unknown error".to_string())
+        );
+    };
     Ok(())
 }

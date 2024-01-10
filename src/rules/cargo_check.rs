@@ -21,7 +21,7 @@ impl LockCheck {
             .join("Cargo.toml");
         let toml_file = binding.as_path();
         let status = repo.status_file(toml_file)?;
-        if status.is_index_new() || status.is_wt_new() {
+        if is_no_commit(status) {
             return build_detail_err(
                 BuildRule::GRS08,
                 parent_path.join("Cargo.toml").display().to_string(),
@@ -53,4 +53,19 @@ impl RuleChecker for LockCheck {
         }
         check_res
     }
+}
+
+fn is_no_commit(status: git2::Status) -> bool {
+    status.is_index_new()
+        || status.is_index_modified()
+        || status.is_index_deleted()
+        || status.is_index_renamed()
+        || status.is_index_typechange()
+        || status.is_wt_new()
+        || status.is_wt_modified()
+        || status.is_wt_deleted()
+        || status.is_wt_typechange()
+        || status.is_wt_renamed()
+        || status.is_ignored()
+        || status.is_conflicted()
 }

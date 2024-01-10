@@ -54,8 +54,23 @@ impl RuleChecker for DependenciesCheck {
                             }
                         };
 
-                        let err = build_detail_err(BuildRule::GRS18, package.manifest_path.as_str().to_string(),  detail, line);
-                        check_res.push(err);
+                        check_res.push(build_detail_err(BuildRule::GRS14, package.manifest_path.as_str().to_string(),  detail, line));
+                        if is_with_prerelease_version(&dep.req) {
+                            let detail = {
+                                if dep.target.is_some() {
+                                    format!(
+                                        "package `{}` use a pre-release version dependency `{}` with target `{}`, please replace it with a release version",
+                                        package.name, dep.name, dep.target.as_ref().unwrap()
+                                    )
+                                } else {
+                                    format!(
+                                        "package `{}` use a pre-release version {}dependency `{}`, please replace it with a release version",
+                                        package.name, section, dep.name
+                                    )
+                                }
+                            };
+                            check_res.push(build_detail_err(BuildRule::GRS18, package.manifest_path.as_str().to_string(),  detail, line));
+                        }
                     }
                 }
             }
@@ -85,4 +100,11 @@ fn is_explicit_version(req: &semver::VersionReq) -> bool {
         false
     })
     .any(|t| t)
+}
+
+fn is_with_prerelease_version(req: &semver::VersionReq) -> bool {
+    req.comparators
+        .iter()
+        .map(|ver| !ver.pre.is_empty())
+        .any(|t| t)
 }

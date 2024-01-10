@@ -3,6 +3,7 @@ use std::fmt::{self, Display};
 
 static BUILD_TOOL: &str = "build tool";
 static BUILD_CONFIGURATION: &str = "build configuration";
+static BUILD_DEPENDENCIES: &str = "build dependencies";
 static PACKAGING_PUBLISHING: &str = "packaging and pushlishing";
 #[derive(Debug, Default)]
 pub struct Detail {
@@ -25,6 +26,7 @@ pub enum BuildRule {
     GRS06,
     GRS08,
     GRS10,
+    GRS14,
     GRS17,
     GRS18,
     GRS20,
@@ -37,6 +39,7 @@ impl fmt::Display for BuildRule {
             BuildRule::GRS06 => write!(f, "[G.RS.06]"),
             BuildRule::GRS08 => write!(f, "[G.RS.08]"),
             BuildRule::GRS10 => write!(f, "[G.RS.10]"),
+            BuildRule::GRS14 => write!(f, "[G.RS.14]"),
             BuildRule::GRS17 => write!(f, "[G.RS.17]"),
             BuildRule::GRS18 => write!(f, "[G.RS.18]"),
             BuildRule::GRS20 => write!(f, "[G.RS.20]"),
@@ -49,7 +52,7 @@ impl From<BuildRule> for Detail {
         match value {
             BuildRule::GRS05 => Detail {
                 level: Level::Rule,
-                // 用来识别具体规范编码，见[开发预定错误码](https://onebox.huawei.com/v/849036f19356874c5cf463c5c01dfe9d?type=1) 
+                // 用来识别具体规范编码，见[开发预定错误码](https://onebox.huawei.com/v/849036f19356874c5cf463c5c01dfe9d?type=1)
                 errno: 31004_usize,
                 check_type: String::from(BUILD_TOOL),
                 ..Detail::default()
@@ -70,6 +73,12 @@ impl From<BuildRule> for Detail {
                 level: Level::Rule,
                 errno: 31009_usize,
                 check_type: String::from(BUILD_CONFIGURATION),
+                ..Detail::default()
+            },
+            BuildRule::GRS14 => Detail {
+                level: Level::Rule,
+                errno: 31013_usize,
+                check_type: String::from(BUILD_DEPENDENCIES),
                 ..Detail::default()
             },
             BuildRule::GRS17 => Detail {
