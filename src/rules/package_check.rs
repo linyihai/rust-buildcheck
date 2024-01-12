@@ -8,23 +8,23 @@ use crate::utils::{
     toml::{cargo_toml::read_toml_file, display_line},
 };
 use anyhow::Context;
-use cargo_metadata::Metadata;
+use cargo_metadata::{Metadata, Package};
 
+static MB: f32 = 1000000.0;
 #[derive(Debug, Clone, Default)]
 pub struct PackageCheck;
 
 impl PackageCheck {
     // check crate size whether over 10MB
-    fn check_package_size(&self, m: &Metadata, max_size: f32) -> CheckResult<()> {
-        let root_package = m.root_package().unwrap();
-        let create_name = format!("{}-{}.crate", root_package.name, root_package.version);
-        let dir = root_package.manifest_path.parent().unwrap().as_std_path();
+    fn check_package_size(&self, package: &Package, max_size: f32) -> CheckResult<()> {
+        let create_name = format!("{}-{}.crate", package.name, package.version);
+        let dir = package.manifest_path.parent().unwrap().as_std_path();
         let crate_path = dir.join("target").join("package").join(&create_name);
-        cargo_package(root_package.manifest_path.as_std_path())?;
+        cargo_package(package.manifest_path.as_std_path())?;
         let crate_size = fs::metadata(crate_path)
             .with_context(|| "cannot find the packed crate")?
             .len();
-        let max_crate_size = max_size * 1000000.0;
+        let max_crate_size = max_size * MB;
         if crate_size as f32 > max_crate_size {
             return build_detail_err(
                 BuildRule::GRS20,
@@ -36,43 +36,39 @@ impl PackageCheck {
         Ok(())
     }
 
-    fn check_package_name(&self, m: &Metadata) -> Vec<CheckResult<()>> {
-        let mut check_res = vec![];
+    fn check_package_name(&self, package: &Package) -> CheckResult<()> {
+        if !is_valid_package_name(&package.name) {
+            let (toml_config, contents) = read_toml_file(package.manifest_path.as_std_path());
+            let line = if let Some(name) = toml_config.package.name {
+                let start = name.span().start;
+                display_line(contents.as_bytes(), start)
+            } else {
+                0
+            };
 
-        for package in &m.packages {
-            if !is_valid_package_name(&package.name) {
-                let (toml_config, contents) = read_toml_file(package.manifest_path.as_std_path());
-                let line = if let Some(name) = toml_config.package.name {
-                    let start = name.span().start;
-                    display_line(contents.as_bytes(), start)
-                } else {
-                    0
-                };
-
-                check_res.push(build_detail_err(
-                    BuildRule::GRS17,
-                    package.manifest_path.as_str().to_string(),
-                    format!(
-                        "package name `{}` not start with ylong_ or huawei_ .",
-                        package.name
-                    ),
-                    line,
-                ));
-            }
+            return build_detail_err(
+                BuildRule::GRS17,
+                package.manifest_path.as_str().to_string(),
+                format!(
+                    "package name `{}` not start with ylong_ or huawei_ .",
+                    package.name
+                ),
+                line,
+            );
         }
-        check_res
+
+        Ok(())
     }
 }
 
 impl RuleChecker for PackageCheck {
     fn check(&self, m: &Metadata, args: &Args) -> Vec<CheckResult<()>> {
         let mut check_res = vec![];
-        let res = self.check_package_size(m, args.crate_size);
-        if res.is_err() {
-            check_res.push(res);
-        }
 
-        check_res.append(&mut self.check_package_name(m));
+        for package in &m.packages {
+            check_res.push(self.check_package_name(package));
+            check_res.push(self.check_package_size(package, args.crate_size));
+        }
         check_res
     }
 }
