@@ -29,7 +29,6 @@ pub enum BuildRule {
     GRS14,
     GRS17,
     GRS18,
-    GRS20,
 }
 
 impl fmt::Display for BuildRule {
@@ -42,7 +41,6 @@ impl fmt::Display for BuildRule {
             BuildRule::GRS14 => write!(f, "[G.RS.14]"),
             BuildRule::GRS17 => write!(f, "[G.RS.17]"),
             BuildRule::GRS18 => write!(f, "[G.RS.18]"),
-            BuildRule::GRS20 => write!(f, "[G.RS.20]"),
         }
     }
 }
@@ -90,12 +88,6 @@ impl From<BuildRule> for Detail {
             BuildRule::GRS18 => Detail {
                 level: Level::Rule,
                 errno: 31017_usize,
-                check_type: String::from(PACKAGING_PUBLISHING),
-                ..Detail::default()
-            },
-            BuildRule::GRS20 => Detail {
-                level: Level::Rule,
-                errno: 31019_usize,
                 check_type: String::from(PACKAGING_PUBLISHING),
                 ..Detail::default()
             },

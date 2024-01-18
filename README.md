@@ -10,7 +10,6 @@ Usage: build-inspector [OPTIONS]
 
 Options:
   -m, --manifest-path <MANIFEST_PATH>  The path of Cargo.toml in the root package directory [default: Cargo.toml]
-  -c, --crate-size <CRATE_SIZE>        The packed crate size(MB) [default: 10]
   -o, --output-file <OUTPUT_FILE>      The output file, [default: rust_buildcheck_output.json]
       --offline                        Run without accessing the network
   -h, --help                           Print help
@@ -19,7 +18,6 @@ Options:
 
 - -m 指定Cargo.toml文件地址，不指定则默认为当前目录下Cargo.toml
 - -o 指定结果输出文件，不指定默认为当前目录下的rust_buildcheck_output.json
-- -c 执行crate包的大小检查项目，默认为10MB
 - --offline 支持无网络访问执行
 
 在rust项目根目录下直接执行rust-bulidcheck二进制文件，输出实例:
@@ -45,7 +43,6 @@ the output file is rust_buildcheck_output.json
 - G.RS.14
 - G.RS.17
 - G.RS.18
-- G.RS.20
 
 ## 注意事项  
 

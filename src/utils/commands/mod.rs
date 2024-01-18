@@ -7,9 +7,6 @@ pub struct Args {
     /// The path of Cargo.toml
     #[arg(short, long, default_value_t = String::from("Cargo.toml"))]
     pub manifest_path: String,
-    /// The packed crate size(MB)
-    #[arg(short, long, default_value_t = 10.0)]
-    pub crate_size: f32,
     /// The output file
     #[arg(short, long, default_value_t = String::from("rust_buildcheck_output.json"))]
     pub output_file: String,
