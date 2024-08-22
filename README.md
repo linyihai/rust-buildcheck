@@ -46,7 +46,7 @@ the output file is rust_buildcheck_output.json
 
 ## 注意事项  
 
-- 工具依赖于`cargo_metadata`获取rust项目信息，要求运行本工具系统上安装rust工具链，见[Rust内源安装工具链](https://openx.huawei.com/communityHome/postDetail?postId=2688&id=90)
+- 工具依赖于`cargo_metadata`获取rust项目信息，要求运行本工具系统上安装rust工具链
 - 默认运行需要访问依赖源，请确保网络能正常访问内源mirror或者crates-io; 如无法访问依赖源，请通过`--offline`参数执行
 - 注意glibc版本问题，高版本glibc构建出来的二进制在低版本上运行不了，如默认情况ubuntu22(glibc 2.35)构建的rust二进制无法在ubuntu18(glibc 2.27)执行。
 
